@@ -1,8 +1,8 @@
-
 import React, { useState } from 'react';
 import Win95Window from './Win95Window';
 import Win95Taskbar from './Win95Taskbar';
 import Win95DesktopIcon from './Win95DesktopIcon';
+import MyComputerWindow from './MyComputerWindow';
 import { Folder, FileText, Computer, Settings, Image, Mail, Globe, Calendar, Clock, Music, Calculator as CalculatorIcon, HelpCircle } from 'lucide-react';
 
 interface Window {
@@ -85,23 +85,7 @@ const Win95Desktop: React.FC = () => {
 
   const openMyComputer = () => {
     openWindow("My Computer", (
-      <div className="p-4 h-full flex flex-wrap gap-4 content-start">
-        <Win95DesktopIcon 
-          label="(C:)" 
-          icon={<Computer size={32} className="text-win95-darkgray" />} 
-          onClick={() => {}} 
-        />
-        <Win95DesktopIcon 
-          label="(D:)" 
-          icon={<Computer size={32} className="text-win95-darkgray" />} 
-          onClick={() => {}} 
-        />
-        <Win95DesktopIcon 
-          label="Control Panel" 
-          icon={<Settings size={32} className="text-win95-darkgray" />} 
-          onClick={() => {}} 
-        />
-      </div>
+      <MyComputerWindow openWindow={openWindow} />
     ), <Computer size={16} />);
   };
 
