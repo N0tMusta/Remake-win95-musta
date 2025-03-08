@@ -235,24 +235,28 @@ const Win95Taskbar: React.FC<Win95TaskbarProps> = ({
                       <div className="win95-submenu right-full top-0">
                         <button 
                           className="win95-start-menu-item"
+                          onClick={() => handleStartItemClick(openMinesweeper)}
+                        >
+                          <div className="w-4 h-4 shrink-0 flex items-center justify-center">💣</div>
+                          <span>Minesweeper</span>
+                        </button>
+                        <button 
+                          className="win95-start-menu-item"
+                          onClick={() => handleStartItemClick(openSolitaire)}
                         >
                           <div className="w-4 h-4 shrink-0 flex items-center justify-center">♣</div>
                           <span>Solitaire</span>
                         </button>
                         <button 
                           className="win95-start-menu-item"
-                        >
-                          <div className="w-4 h-4 shrink-0 flex items-center justify-center">♦</div>
-                          <span>Minesweeper</span>
-                        </button>
-                        <button 
-                          className="win95-start-menu-item"
+                          onClick={() => handleStartItemClick(openFreeCell)}
                         >
                           <div className="w-4 h-4 shrink-0 flex items-center justify-center">♠</div>
                           <span>FreeCell</span>
                         </button>
                         <button 
                           className="win95-start-menu-item"
+                          onClick={() => handleStartItemClick(openHearts)}
                         >
                           <div className="w-4 h-4 shrink-0 flex items-center justify-center">♥</div>
                           <span>Hearts</span>

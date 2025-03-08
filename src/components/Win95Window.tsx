@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { X, Minus } from 'lucide-react';
 
@@ -12,6 +11,8 @@ interface Win95WindowProps {
   onClose: () => void;
   onMinimize: () => void;
   onActivate: () => void;
+  width?: number;
+  height?: number;
 }
 
 const Win95Window: React.FC<Win95WindowProps> = ({ 
@@ -23,10 +24,12 @@ const Win95Window: React.FC<Win95WindowProps> = ({
   zIndex, 
   onClose, 
   onMinimize, 
-  onActivate 
+  onActivate,
+  width: initialWidth = 400,
+  height: initialHeight = 300
 }) => {
   const [position, setPosition] = useState({ x: 50, y: 50 });
-  const [size, setSize] = useState({ width: 400, height: 300 });
+  const [size, setSize] = useState({ width: initialWidth, height: initialHeight });
   const [isDragging, setIsDragging] = useState(false);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
   const [isResizing, setIsResizing] = useState(false);
@@ -37,7 +40,6 @@ const Win95Window: React.FC<Win95WindowProps> = ({
   
   const windowRef = useRef<HTMLDivElement>(null);
   
-  // Generate random position for each new window
   useEffect(() => {
     const randomX = Math.floor(Math.random() * 100) + 50;
     const randomY = Math.floor(Math.random() * 100) + 50;
@@ -128,7 +130,6 @@ const Win95Window: React.FC<Win95WindowProps> = ({
     };
   }, [isDragging, isResizing, dragOffset, initialMousePos, initialSize, initialPosition, resizeDirection]);
   
-  // Handle click on window body to activate
   const handleWindowClick = () => {
     if (!isActive) {
       onActivate();
@@ -175,7 +176,6 @@ const Win95Window: React.FC<Win95WindowProps> = ({
         {children}
       </div>
       
-      {/* Resize handles */}
       <div 
         className="absolute right-0 bottom-0 w-3 h-3 cursor-se-resize"
         onMouseDown={(e) => handleResizeMouseDown('se', e)}
