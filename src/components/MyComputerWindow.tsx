@@ -1,7 +1,6 @@
-
 import React, { useState } from 'react';
 import Win95DesktopIcon from './Win95DesktopIcon';
-import { Computer, Folder, HardDrive, Settings, FileText, Map, Info, MoreHorizontal, Printer, Network, Clock, User, Maximize2 } from 'lucide-react';
+import { Computer, Folder, HardDrive, Settings, FileText, Map, Info, MoreHorizontal, Printer, Network, Clock, User, Maximize2, Monitor } from 'lucide-react';
 
 interface MyComputerProps {
   openWindow: (title: string, content: React.ReactNode, icon: React.ReactNode) => void;
@@ -209,7 +208,6 @@ const MyComputerWindow: React.FC<MyComputerProps> = ({ openWindow }) => {
     ), <Printer size={16} />);
   };
   
-  // Toolbar rendering
   const renderToolbar = () => (
     <div className="border-b border-win95-border-dark mb-2">
       <div className="flex p-1">
@@ -248,7 +246,6 @@ const MyComputerWindow: React.FC<MyComputerProps> = ({ openWindow }) => {
     </div>
   );
   
-  // Render the appropriate view based on currentView state
   const renderView = () => {
     if (currentView === 'details') {
       return (
@@ -329,7 +326,6 @@ const MyComputerWindow: React.FC<MyComputerProps> = ({ openWindow }) => {
         </div>
       );
     } else {
-      // Default icon view
       return (
         <div className="win95-inset bg-white flex-1 p-4 overflow-auto">
           <div className="flex flex-wrap gap-4 content-start">
