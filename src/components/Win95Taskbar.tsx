@@ -1,7 +1,7 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Clock } from './Win95Clock';
-import { Computer, FileText, Settings, Folder, Image } from 'lucide-react';
+import { Computer, FileText, Settings, Folder, Image, Mail, Globe, Calendar, Music, Calculator as CalculatorIcon, HelpCircle, Power, User, Monitor, Workflow } from 'lucide-react';
 
 interface Window {
   id: string;
@@ -18,6 +18,12 @@ interface Win95TaskbarProps {
   restoreWindow: (id: string) => void;
   openNotepad: () => void;
   openMyComputer: () => void;
+  openPaintApp: () => void;
+  openInternetExplorer: () => void;
+  openCalendar: () => void;
+  openCalculator: () => void;
+  openMediaPlayer: () => void;
+  openHelpCenter: () => void;
 }
 
 const Win95Taskbar: React.FC<Win95TaskbarProps> = ({
@@ -27,8 +33,32 @@ const Win95Taskbar: React.FC<Win95TaskbarProps> = ({
   toggleStartMenu,
   restoreWindow,
   openNotepad,
-  openMyComputer
+  openMyComputer,
+  openPaintApp,
+  openInternetExplorer,
+  openCalendar,
+  openCalculator,
+  openMediaPlayer,
+  openHelpCenter
 }) => {
+  const [showProgramsMenu, setShowProgramsMenu] = useState(false);
+  const [showAccessoriesMenu, setShowAccessoriesMenu] = useState(false);
+  
+  const handleStartItemHover = (menu: string, isHovering: boolean) => {
+    if (menu === 'programs') {
+      setShowProgramsMenu(isHovering);
+      if (!isHovering) setShowAccessoriesMenu(false);
+    } else if (menu === 'accessories') {
+      setShowAccessoriesMenu(isHovering);
+    }
+  };
+
+  const handleStartItemClick = (fn: () => void) => {
+    fn();
+    setShowProgramsMenu(false);
+    setShowAccessoriesMenu(false);
+  };
+
   return (
     <div className="win95-taskbar">
       <button 
@@ -89,14 +119,93 @@ const Win95Taskbar: React.FC<Win95TaskbarProps> = ({
           </div>
           
           <div className="ml-10">
-            <button className="win95-start-menu-item" onClick={openMyComputer}>
+            <div 
+              className="win95-start-menu-item relative"
+              onMouseEnter={() => handleStartItemHover('programs', true)}
+              onMouseLeave={() => handleStartItemHover('programs', false)}
+            >
+              <Workflow size={16} className="shrink-0" />
+              <span>Programs</span>
+              <span className="ml-auto">▶</span>
+              
+              {showProgramsMenu && (
+                <div className="win95-submenu">
+                  <div 
+                    className="win95-start-menu-item relative"
+                    onMouseEnter={() => handleStartItemHover('accessories', true)}
+                    onMouseLeave={() => handleStartItemHover('accessories', false)}
+                  >
+                    <Folder size={16} className="shrink-0" />
+                    <span>Accessories</span>
+                    <span className="ml-auto">▶</span>
+                    
+                    {showAccessoriesMenu && (
+                      <div className="win95-submenu right-full top-0">
+                        <button 
+                          className="win95-start-menu-item"
+                          onClick={() => handleStartItemClick(openNotepad)}
+                        >
+                          <FileText size={16} className="shrink-0" />
+                          <span>Notepad</span>
+                        </button>
+                        <button 
+                          className="win95-start-menu-item"
+                          onClick={() => handleStartItemClick(openPaintApp)}
+                        >
+                          <Image size={16} className="shrink-0" />
+                          <span>Paint</span>
+                        </button>
+                        <button 
+                          className="win95-start-menu-item"
+                          onClick={() => handleStartItemClick(openCalculator)}
+                        >
+                          <CalculatorIcon size={16} className="shrink-0" />
+                          <span>Calculator</span>
+                        </button>
+                        <button 
+                          className="win95-start-menu-item"
+                          onClick={() => handleStartItemClick(openCalendar)}
+                        >
+                          <Calendar size={16} className="shrink-0" />
+                          <span>Calendar</span>
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                  
+                  <button 
+                    className="win95-start-menu-item"
+                    onClick={() => handleStartItemClick(openInternetExplorer)}
+                  >
+                    <Globe size={16} className="shrink-0" />
+                    <span>Internet Explorer</span>
+                  </button>
+                  
+                  <button 
+                    className="win95-start-menu-item"
+                    onClick={() => handleStartItemClick(openMediaPlayer)}
+                  >
+                    <Music size={16} className="shrink-0" />
+                    <span>Media Player</span>
+                  </button>
+                </div>
+              )}
+            </div>
+            
+            <button 
+              className="win95-start-menu-item"
+              onClick={() => handleStartItemClick(openMyComputer)}
+            >
               <Computer size={16} className="shrink-0" />
               <span>My Computer</span>
             </button>
             
-            <button className="win95-start-menu-item" onClick={openNotepad}>
-              <FileText size={16} className="shrink-0" />
-              <span>Notepad</span>
+            <button 
+              className="win95-start-menu-item"
+              onClick={() => handleStartItemClick(openHelpCenter)}
+            >
+              <HelpCircle size={16} className="shrink-0" />
+              <span>Help</span>
             </button>
             
             <div className="h-px bg-win95-border-dark shadow-[0_1px_0_theme(colors.win95.border.light)] my-1"></div>
@@ -104,6 +213,16 @@ const Win95Taskbar: React.FC<Win95TaskbarProps> = ({
             <button className="win95-start-menu-item">
               <Settings size={16} className="shrink-0" />
               <span>Control Panel</span>
+            </button>
+            
+            <button className="win95-start-menu-item">
+              <Monitor size={16} className="shrink-0" />
+              <span>Display Settings</span>
+            </button>
+            
+            <button className="win95-start-menu-item">
+              <User size={16} className="shrink-0" />
+              <span>User Accounts</span>
             </button>
             
             <div className="h-px bg-win95-border-dark shadow-[0_1px_0_theme(colors.win95.border.light)] my-1"></div>
@@ -114,9 +233,7 @@ const Win95Taskbar: React.FC<Win95TaskbarProps> = ({
             </button>
             
             <button className="win95-start-menu-item">
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
-                <path d="M8 2a6 6 0 0 0 0 12A6 6 0 0 0 8 2zm0 10.5a4.5 4.5 0 1 1 0-9 4.5 4.5 0 0 1 0 9zm-3.5-4h7v1h-7v-1z"/>
-              </svg>
+              <Power size={16} className="shrink-0" />
               <span>Shut Down...</span>
             </button>
           </div>

@@ -124,7 +124,14 @@
   }
   
   .win95-start-menu-item {
-    @apply flex items-center px-2 py-1 gap-2 hover:bg-win95-blue hover:text-white;
+    @apply flex items-center px-2 py-1 gap-2 hover:bg-win95-blue hover:text-white w-full text-left;
+  }
+  
+  .win95-submenu {
+    @apply absolute left-full top-0 bg-win95-gray py-2 w-48 z-50;
+    box-shadow: inset 1px 1px 0px theme('colors.win95.border.light'), 
+                inset -1px -1px 0px theme('colors.win95.border.dark'),
+                1px 1px 0px theme('colors.win95.border.shadow');
   }
   
   .win95-taskbar {
@@ -148,5 +155,20 @@
     @apply w-px h-full mx-1;
     box-shadow: 1px 0 0 theme('colors.win95.border.light'),
                 0 0 0 1px theme('colors.win95.border.dark');
+  }
+  
+  @keyframes window-appear {
+    from {
+      opacity: 0;
+      transform: scale(0.9);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+  
+  .animate-window-appear {
+    animation: window-appear 0.1s ease-out;
   }
 }
