@@ -1,11 +1,13 @@
+
 import React, { useState } from 'react';
 import Win95Clock from './Win95Clock';
-import { 
-  Computer, FileText, Settings, Folder, Image, Mail, Globe, Calendar, 
-  Music, Calculator as CalculatorIcon, HelpCircle, Power, User, 
-  Monitor, Workflow, Search, Printer, Network, BookOpen, Coffee,
-  FolderOpen, Lock, BarChart, Cpu, Server, Database, FileArchive, Wifi
-} from 'lucide-react';
+import Win95StartMenu from './taskbar/Win95StartMenu';
+import Win95TaskbarItem from './taskbar/Win95TaskbarItem';
+import Win95RunDialog from './taskbar/Win95RunDialog';
+import Win95NetworkDialog from './taskbar/Win95NetworkDialog';
+import Win95NetworkStatus from './taskbar/Win95NetworkStatus';
+import { useNetworkStatus } from './NetworkStatusProvider';
+import { Network } from 'lucide-react';
 
 interface Window {
   id: string;
@@ -45,59 +47,13 @@ const Win95Taskbar: React.FC<Win95TaskbarProps> = ({
   openMediaPlayer,
   openHelpCenter
 }) => {
-  const [showProgramsMenu, setShowProgramsMenu] = useState(false);
-  const [showAccessoriesMenu, setShowAccessoriesMenu] = useState(false);
-  const [showGamesMenu, setShowGamesMenu] = useState(false);
-  const [showSystemToolsMenu, setShowSystemToolsMenu] = useState(false);
-  const [showDocumentsMenu, setShowDocumentsMenu] = useState(false);
-  const [showSettingsMenu, setShowSettingsMenu] = useState(false);
   const [runDialogOpen, setRunDialogOpen] = useState(false);
   const [networkDialogOpen, setNetworkDialogOpen] = useState(false);
-  const [isConnected, setIsConnected] = useState(false);
-  
-  const handleStartItemHover = (menu: string, isHovering: boolean) => {
-    if (menu === 'programs') {
-      setShowProgramsMenu(isHovering);
-      if (!isHovering) {
-        setShowAccessoriesMenu(false);
-        setShowGamesMenu(false);
-        setShowSystemToolsMenu(false);
-      }
-    } else if (menu === 'accessories') {
-      setShowAccessoriesMenu(isHovering);
-    } else if (menu === 'games') {
-      setShowGamesMenu(isHovering);
-    } else if (menu === 'systemTools') {
-      setShowSystemToolsMenu(isHovering);
-    } else if (menu === 'documents') {
-      setShowDocumentsMenu(isHovering);
-    } else if (menu === 'settings') {
-      setShowSettingsMenu(isHovering);
-    }
-  };
-
-  const handleStartItemClick = (fn: () => void) => {
-    fn();
-    closeAllMenus();
-  };
-  
-  const closeAllMenus = () => {
-    setShowProgramsMenu(false);
-    setShowAccessoriesMenu(false);
-    setShowGamesMenu(false);
-    setShowSystemToolsMenu(false);
-    setShowDocumentsMenu(false);
-    setShowSettingsMenu(false);
-  };
+  const { isConnected, setIsConnected } = useNetworkStatus();
 
   const showRunDialog = () => {
     setRunDialogOpen(true);
     toggleStartMenu();
-  };
-  
-  const handleGameClick = () => {
-    toggleStartMenu();
-    alert("Game functionality is not implemented yet!");
   };
 
   const toggleNetworkConnection = () => {
@@ -111,8 +67,10 @@ const Win95Taskbar: React.FC<Win95TaskbarProps> = ({
         <div class="win95-window p-2 absolute bottom-16 right-2 w-64 shadow-lg z-50">
           <div class="win95-titlebar mb-1">
             <div class="flex items-center gap-1">
-              <Network size={14} />
-              <span>Network Status</span>
+              <div class="flex items-center gap-1">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-network"><rect x="9" y="2" width="6" height="6" rx="2"></rect><rect x="16" y="16" width="6" height="6" rx="2"></rect><rect x="2" y="16" width="6" height="6" rx="2"></rect><path d="M5 16v-4h14v4"></path><path d="M12 12V8"></path></svg>
+                <span>Network Status</span>
+              </div>
             </div>
           </div>
           <div class="p-2 text-sm">
@@ -138,8 +96,10 @@ const Win95Taskbar: React.FC<Win95TaskbarProps> = ({
       <div class="win95-window p-2 absolute bottom-16 right-2 w-64 shadow-lg z-50">
         <div class="win95-titlebar mb-1">
           <div class="flex items-center gap-1">
-            <Network size={14} />
-            <span>Network Status</span>
+            <div class="flex items-center gap-1">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-network"><rect x="9" y="2" width="6" height="6" rx="2"></rect><rect x="16" y="16" width="6" height="6" rx="2"></rect><rect x="2" y="16" width="6" height="6" rx="2"></rect><path d="M5 16v-4h14v4"></path><path d="M12 12V8"></path></svg>
+              <span>Network Status</span>
+            </div>
           </div>
         </div>
         <div class="p-2 text-sm">
@@ -185,424 +145,49 @@ const Win95Taskbar: React.FC<Win95TaskbarProps> = ({
       <div className="win95-divider"></div>
       
       {windows.map((window) => (
-        <button
+        <Win95TaskbarItem
           key={window.id}
-          className={`win95-taskbar-item ${activeWindow === window.id && !window.isMinimized ? 'active' : ''}`}
-          onClick={() => {
-            if (window.isMinimized) {
-              restoreWindow(window.id);
-            } else if (activeWindow === window.id) {
-              restoreWindow(window.id);
-            } else {
-              restoreWindow(window.id);
-            }
-          }}
-        >
-          <span>{window.icon}</span>
-          <span className="truncate">{window.title}</span>
-        </button>
+          id={window.id}
+          title={window.title}
+          icon={window.icon}
+          isActive={activeWindow === window.id}
+          isMinimized={window.isMinimized}
+          onClick={() => restoreWindow(window.id)}
+        />
       ))}
       
       <div className="flex-1"></div>
       
-      <button 
-        className="win95-inset px-2 py-1 bg-win95-gray text-black text-xs flex items-center mr-1"
-        onClick={toggleNetworkConnection}
-        title={isConnected ? "Connected to Internet" : "Not connected"}
-      >
-        {isConnected ? (
-          <Wifi size={16} className="text-green-600" />
-        ) : (
-          <Network size={16} className="text-gray-600" />
-        )}
-      </button>
+      <Win95NetworkStatus onClick={toggleNetworkConnection} />
       
       <Win95Clock />
       
-      {startMenuOpen && (
-        <div className="win95-start-menu">
-          <div className="bg-win95-blue text-white font-bold p-4 absolute left-0 top-0 bottom-0 w-10 rotate-180" style={{ writingMode: 'vertical-rl' }}>
-            Windows 95
-          </div>
-          
-          <div className="ml-10">
-            <div 
-              className="win95-start-menu-item relative"
-              onMouseEnter={() => handleStartItemHover('programs', true)}
-              onMouseLeave={() => handleStartItemHover('programs', false)}
-            >
-              <Workflow size={16} className="shrink-0" />
-              <span>Programs</span>
-              <span className="ml-auto">▶</span>
-              
-              {showProgramsMenu && (
-                <div className="win95-submenu">
-                  <div 
-                    className="win95-start-menu-item relative"
-                    onMouseEnter={() => handleStartItemHover('accessories', true)}
-                    onMouseLeave={() => handleStartItemHover('accessories', false)}
-                  >
-                    <Folder size={16} className="shrink-0" />
-                    <span>Accessories</span>
-                    <span className="ml-auto">▶</span>
-                    
-                    {showAccessoriesMenu && (
-                      <div className="win95-submenu right-full top-0">
-                        <button 
-                          className="win95-start-menu-item"
-                          onClick={() => handleStartItemClick(openNotepad)}
-                        >
-                          <FileText size={16} className="shrink-0" />
-                          <span>Notepad</span>
-                        </button>
-                        <button 
-                          className="win95-start-menu-item"
-                          onClick={() => handleStartItemClick(openPaintApp)}
-                        >
-                          <Image size={16} className="shrink-0" />
-                          <span>Paint</span>
-                        </button>
-                        <button 
-                          className="win95-start-menu-item"
-                          onClick={() => handleStartItemClick(openCalculator)}
-                        >
-                          <CalculatorIcon size={16} className="shrink-0" />
-                          <span>Calculator</span>
-                        </button>
-                        <button 
-                          className="win95-start-menu-item"
-                          onClick={() => handleStartItemClick(openCalendar)}
-                        >
-                          <Calendar size={16} className="shrink-0" />
-                          <span>Calendar</span>
-                        </button>
-                        <button 
-                          className="win95-start-menu-item"
-                        >
-                          <Calendar size={16} className="shrink-0" />
-                          <span>Clock</span>
-                        </button>
-                        <button 
-                          className="win95-start-menu-item"
-                        >
-                          <BookOpen size={16} className="shrink-0" />
-                          <span>WordPad</span>
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                  
-                  <div 
-                    className="win95-start-menu-item relative"
-                    onMouseEnter={() => handleStartItemHover('games', true)}
-                    onMouseLeave={() => handleStartItemHover('games', false)}
-                  >
-                    <Folder size={16} className="shrink-0" />
-                    <span>Games</span>
-                    <span className="ml-auto">▶</span>
-                    
-                    {showGamesMenu && (
-                      <div className="win95-submenu right-full top-0">
-                        <button 
-                          className="win95-start-menu-item"
-                          onClick={handleGameClick}
-                        >
-                          <div className="w-4 h-4 shrink-0 flex items-center justify-center">💣</div>
-                          <span>Minesweeper</span>
-                        </button>
-                        <button 
-                          className="win95-start-menu-item"
-                          onClick={handleGameClick}
-                        >
-                          <div className="w-4 h-4 shrink-0 flex items-center justify-center">♣</div>
-                          <span>Solitaire</span>
-                        </button>
-                        <button 
-                          className="win95-start-menu-item"
-                          onClick={handleGameClick}
-                        >
-                          <div className="w-4 h-4 shrink-0 flex items-center justify-center">♠</div>
-                          <span>FreeCell</span>
-                        </button>
-                        <button 
-                          className="win95-start-menu-item"
-                          onClick={handleGameClick}
-                        >
-                          <div className="w-4 h-4 shrink-0 flex items-center justify-center">♥</div>
-                          <span>Hearts</span>
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                  
-                  <div 
-                    className="win95-start-menu-item relative"
-                    onMouseEnter={() => handleStartItemHover('systemTools', true)}
-                    onMouseLeave={() => handleStartItemHover('systemTools', false)}
-                  >
-                    <Folder size={16} className="shrink-0" />
-                    <span>System Tools</span>
-                    <span className="ml-auto">▶</span>
-                    
-                    {showSystemToolsMenu && (
-                      <div className="win95-submenu right-full top-0">
-                        <button 
-                          className="win95-start-menu-item"
-                        >
-                          <Cpu size={16} className="shrink-0" />
-                          <span>System Information</span>
-                        </button>
-                        <button 
-                          className="win95-start-menu-item"
-                        >
-                          <FileArchive size={16} className="shrink-0" />
-                          <span>Disk Defragmenter</span>
-                        </button>
-                        <button 
-                          className="win95-start-menu-item"
-                        >
-                          <Server size={16} className="shrink-0" />
-                          <span>Backup</span>
-                        </button>
-                        <button 
-                          className="win95-start-menu-item"
-                        >
-                          <BarChart size={16} className="shrink-0" />
-                          <span>Resource Monitor</span>
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                  
-                  <button 
-                    className="win95-start-menu-item"
-                    onClick={() => handleStartItemClick(openInternetExplorer)}
-                  >
-                    <Globe size={16} className="shrink-0" />
-                    <span>Internet Explorer</span>
-                  </button>
-                  
-                  <button 
-                    className="win95-start-menu-item"
-                    onClick={() => handleStartItemClick(openMediaPlayer)}
-                  >
-                    <Music size={16} className="shrink-0" />
-                    <span>Media Player</span>
-                  </button>
-                  
-                  <button 
-                    className="win95-start-menu-item"
-                  >
-                    <Mail size={16} className="shrink-0" />
-                    <span>Outlook Express</span>
-                  </button>
-                  
-                  <button 
-                    className="win95-start-menu-item"
-                  >
-                    <Printer size={16} className="shrink-0" />
-                    <span>Microsoft Fax</span>
-                  </button>
-                </div>
-              )}
-            </div>
-            
-            <div 
-              className="win95-start-menu-item relative"
-              onMouseEnter={() => handleStartItemHover('documents', true)}
-              onMouseLeave={() => handleStartItemHover('documents', false)}
-            >
-              <FolderOpen size={16} className="shrink-0" />
-              <span>Documents</span>
-              <span className="ml-auto">▶</span>
-              
-              {showDocumentsMenu && (
-                <div className="win95-submenu">
-                  <button className="win95-start-menu-item">
-                    <FileText size={16} className="shrink-0" />
-                    <span>My Documents</span>
-                  </button>
-                  <button className="win95-start-menu-item">
-                    <FileText size={16} className="shrink-0" />
-                    <span>Recent Documents</span>
-                  </button>
-                </div>
-              )}
-            </div>
-            
-            <div 
-              className="win95-start-menu-item relative"
-              onMouseEnter={() => handleStartItemHover('settings', true)}
-              onMouseLeave={() => handleStartItemHover('settings', false)}
-            >
-              <Settings size={16} className="shrink-0" />
-              <span>Settings</span>
-              <span className="ml-auto">▶</span>
-              
-              {showSettingsMenu && (
-                <div className="win95-submenu">
-                  <button className="win95-start-menu-item">
-                    <Monitor size={16} className="shrink-0" />
-                    <span>Control Panel</span>
-                  </button>
-                  <button className="win95-start-menu-item">
-                    <Printer size={16} className="shrink-0" />
-                    <span>Printers</span>
-                  </button>
-                  <button className="win95-start-menu-item">
-                    <Network size={16} className="shrink-0" />
-                    <span>Network</span>
-                  </button>
-                  <button className="win95-start-menu-item">
-                    <Database size={16} className="shrink-0" />
-                    <span>Taskbar & Start Menu</span>
-                  </button>
-                </div>
-              )}
-            </div>
-            
-            <button 
-              className="win95-start-menu-item"
-              onClick={() => handleStartItemClick(openMyComputer)}
-            >
-              <Computer size={16} className="shrink-0" />
-              <span>My Computer</span>
-            </button>
-            
-            <button 
-              className="win95-start-menu-item"
-            >
-              <Search size={16} className="shrink-0" />
-              <span>Find</span>
-            </button>
-            
-            <button 
-              className="win95-start-menu-item"
-              onClick={() => handleStartItemClick(openHelpCenter)}
-            >
-              <HelpCircle size={16} className="shrink-0" />
-              <span>Help</span>
-            </button>
-            
-            <div className="h-px bg-win95-border-dark shadow-[0_1px_0_theme(colors.win95.border.light)] my-1"></div>
-            
-            <button 
-              className="win95-start-menu-item"
-              onClick={showRunDialog}
-            >
-              <FileText size={16} className="shrink-0" />
-              <span>Run...</span>
-            </button>
-            
-            <div className="h-px bg-win95-border-dark shadow-[0_1px_0_theme(colors.win95.border.light)] my-1"></div>
-            
-            <button 
-              className="win95-start-menu-item"
-            >
-              <Lock size={16} className="shrink-0" />
-              <span>Log Off {window.location.hostname.split('.')[0]}...</span>
-            </button>
-            
-            <button 
-              className="win95-start-menu-item"
-            >
-              <Power size={16} className="shrink-0" />
-              <span>Shut Down...</span>
-            </button>
-          </div>
-        </div>
-      )}
+      <Win95StartMenu
+        isOpen={startMenuOpen}
+        onClose={toggleStartMenu}
+        openNotepad={openNotepad}
+        openMyComputer={openMyComputer}
+        openPaintApp={openPaintApp}
+        openInternetExplorer={openInternetExplorer}
+        openCalendar={openCalendar}
+        openCalculator={openCalculator}
+        openMediaPlayer={openMediaPlayer}
+        openHelpCenter={openHelpCenter}
+        showRunDialog={showRunDialog}
+      />
       
-      {runDialogOpen && (
-        <div className="fixed inset-0 flex items-center justify-center z-50" onClick={() => setRunDialogOpen(false)}>
-          <div className="win95-window p-2 w-80" onClick={(e) => e.stopPropagation()}>
-            <div className="win95-titlebar mb-2">
-              <div className="flex items-center gap-1">
-                <FileText size={14} />
-                <span>Run</span>
-              </div>
-              <button className="win95-title-button" onClick={() => setRunDialogOpen(false)}>
-                <span className="text-xl leading-none">×</span>
-              </button>
-            </div>
-            <div className="p-2">
-              <div className="mb-4">
-                <label className="block mb-1">Type the name of a program, folder, document, or Internet resource, and Windows will open it for you.</label>
-                <div className="flex items-center gap-2">
-                  <span>Open:</span>
-                  <input type="text" className="win95-inset flex-1 px-2 py-1 bg-white" />
-                </div>
-              </div>
-              <div className="flex justify-end gap-2">
-                <button className="win95-button px-3 py-1">OK</button>
-                <button className="win95-button px-3 py-1" onClick={() => setRunDialogOpen(false)}>Cancel</button>
-                <button className="win95-button px-3 py-1">Browse...</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      <Win95RunDialog
+        isOpen={runDialogOpen}
+        onClose={() => setRunDialogOpen(false)}
+      />
       
-      {networkDialogOpen && (
-        <div className="fixed inset-0 flex items-center justify-center z-50" onClick={() => setNetworkDialogOpen(false)}>
-          <div className="win95-window p-2 w-80" onClick={(e) => e.stopPropagation()}>
-            <div className="win95-titlebar mb-2">
-              <div className="flex items-center gap-1">
-                <Network size={14} />
-                <span>Dial-Up Networking</span>
-              </div>
-              <button className="win95-title-button" onClick={() => setNetworkDialogOpen(false)}>
-                <span className="text-xl leading-none">×</span>
-              </button>
-            </div>
-            <div className="p-2">
-              <div className="mb-4">
-                <div className="win95-inset p-3 mb-3 bg-white">
-                  <div className="flex items-center justify-center space-x-2 mb-2">
-                    <Computer size={20} />
-                    <div className="text-sm">Connected to:</div>
-                    <Globe size={20} />
-                  </div>
-                  <div className="text-center font-bold mb-2">Internet Service Provider</div>
-                  <div className="text-xs text-center">Phone number: 1-800-INTERNET</div>
-                </div>
-                
-                <div className="flex flex-col space-y-2 mb-3">
-                  <div className="flex justify-between items-center">
-                    <span className="text-xs">Username:</span>
-                    <input type="text" className="win95-inset px-2 py-1 text-xs bg-white w-40" defaultValue="user" />
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-xs">Password:</span>
-                    <input type="password" className="win95-inset px-2 py-1 text-xs bg-white w-40" defaultValue="•••••••" />
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <input type="checkbox" id="save-password" className="win95-checkbox" defaultChecked />
-                    <label htmlFor="save-password" className="text-xs">Save password</label>
-                  </div>
-                </div>
-              </div>
-              <div className="flex justify-center gap-2">
-                <button 
-                  className="win95-button px-4 py-1"
-                  onClick={connectToNetwork}
-                >
-                  Connect
-                </button>
-                <button 
-                  className="win95-button px-3 py-1" 
-                  onClick={() => setNetworkDialogOpen(false)}
-                >
-                  Cancel
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      <Win95NetworkDialog
+        isOpen={networkDialogOpen}
+        onClose={() => setNetworkDialogOpen(false)}
+        connectToNetwork={connectToNetwork}
+      />
     </div>
   );
 };
 
 export default Win95Taskbar;
-
