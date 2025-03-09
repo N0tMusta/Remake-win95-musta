@@ -1,5 +1,6 @@
+
 import React, { useState } from 'react';
-import { Win95Clock } from './Win95Clock';
+import Win95Clock from './Win95Clock';
 import { 
   Computer, FileText, Settings, Folder, Image, Mail, Globe, Calendar, 
   Music, Calculator as CalculatorIcon, HelpCircle, Power, User, 
@@ -46,7 +47,7 @@ const Win95Taskbar: React.FC<Win95TaskbarProps> = ({
   openHelpCenter
 }) => {
   const [showProgramsMenu, setShowProgramsMenu] = useState(false);
-  const [showAccessoriesMenu, setShowGamesMenu] = useState(false);
+  const [showAccessoriesMenu, setShowAccessoriesMenu] = useState(false);
   const [showGamesMenu, setShowGamesMenu] = useState(false);
   const [showSystemToolsMenu, setShowSystemToolsMenu] = useState(false);
   const [showDocumentsMenu, setShowDocumentsMenu] = useState(false);
