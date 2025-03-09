@@ -3,7 +3,11 @@ import Win95Window from './Win95Window';
 import Win95Taskbar from './Win95Taskbar';
 import Win95DesktopIcon from './Win95DesktopIcon';
 import MyComputerWindow from './MyComputerWindow';
-import { Folder, FileText, Computer, Settings, Image, Mail, Globe, Calendar, Clock, Music, Calculator as CalculatorIcon, HelpCircle } from 'lucide-react';
+import { NetworkStatusProvider } from './NetworkStatusProvider';
+import { 
+  Computer, FileText, Settings, Folder, Image, Mail, Globe, Calendar, 
+  Music, Calculator as CalculatorIcon, HelpCircle, Network 
+} from 'lucide-react';
 
 interface Window {
   id: string;
@@ -248,89 +252,121 @@ const Win95Desktop: React.FC = () => {
   };
 
   return (
-    <div className="fixed inset-0">
-      <div className="flex flex-wrap gap-4 p-4 content-start">
-        <Win95DesktopIcon 
-          label="My Computer"
-          icon={<Computer size={32} className="text-win95-darkgray" />}
-          onClick={openMyComputer}
-        />
-        <Win95DesktopIcon 
-          label="My Documents"
-          icon={<Folder size={32} className="text-win95-darkgray" />}
-          onClick={openMyDocuments}
-        />
-        <Win95DesktopIcon 
-          label="Notepad"
-          icon={<FileText size={32} className="text-win95-darkgray" />}
-          onClick={openNotepad}
-        />
-        <Win95DesktopIcon 
-          label="Paint"
-          icon={<Image size={32} className="text-win95-darkgray" />}
-          onClick={openPaintApp}
-        />
-        <Win95DesktopIcon 
-          label="Internet Explorer"
-          icon={<Globe size={32} className="text-win95-darkgray" />}
-          onClick={openInternetExplorer}
-        />
-        <Win95DesktopIcon 
-          label="Calendar"
-          icon={<Calendar size={32} className="text-win95-darkgray" />}
-          onClick={openCalendar}
-        />
-        <Win95DesktopIcon 
-          label="Calculator"
-          icon={<CalculatorIcon size={32} className="text-win95-darkgray" />}
-          onClick={openCalculator}
-        />
-        <Win95DesktopIcon 
-          label="Media Player"
-          icon={<Music size={32} className="text-win95-darkgray" />}
-          onClick={openMediaPlayer}
-        />
-        <Win95DesktopIcon 
-          label="Help"
-          icon={<HelpCircle size={32} className="text-win95-darkgray" />}
-          onClick={openHelpCenter}
+    <NetworkStatusProvider>
+      <div className="fixed inset-0">
+        <div className="flex flex-wrap gap-4 p-4 content-start">
+          <Win95DesktopIcon 
+            label="My Computer"
+            icon={<Computer size={32} className="text-win95-darkgray" />}
+            onClick={openMyComputer}
+          />
+          <Win95DesktopIcon 
+            label="My Documents"
+            icon={<Folder size={32} className="text-win95-darkgray" />}
+            onClick={openMyDocuments}
+          />
+          <Win95DesktopIcon 
+            label="Notepad"
+            icon={<FileText size={32} className="text-win95-darkgray" />}
+            onClick={openNotepad}
+          />
+          <Win95DesktopIcon 
+            label="Paint"
+            icon={<Image size={32} className="text-win95-darkgray" />}
+            onClick={openPaintApp}
+          />
+          <Win95DesktopIcon 
+            label="Internet Explorer"
+            icon={<Globe size={32} className="text-win95-darkgray" />}
+            onClick={openInternetExplorer}
+          />
+          <Win95DesktopIcon 
+            label="Network"
+            icon={<Network size={32} className="text-win95-darkgray" />}
+            onClick={() => {
+              openWindow("Network Connections", (
+                <div className="p-4 h-full">
+                  <div className="mb-4">
+                    <h3 className="font-bold mb-2">Network Connections</h3>
+                    <p className="text-sm">Select a connection to connect to the Internet</p>
+                  </div>
+                  <div className="win95-inset bg-white p-3">
+                    <div className="flex items-center gap-3 p-2 hover:bg-win95-blue hover:text-white cursor-pointer">
+                      <Globe size={32} className="text-win95-darkgray" />
+                      <div>
+                        <div className="font-bold">Dial-Up Connection</div>
+                        <div className="text-xs">Internet Service Provider</div>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3 p-2 hover:bg-win95-blue hover:text-white cursor-pointer">
+                      <Network size={32} className="text-win95-darkgray" />
+                      <div>
+                        <div className="font-bold">Local Area Connection</div>
+                        <div className="text-xs">Network Adapter</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ), <Network size={16} />);
+            }}
+          />
+          <Win95DesktopIcon 
+            label="Calendar"
+            icon={<Calendar size={32} className="text-win95-darkgray" />}
+            onClick={openCalendar}
+          />
+          <Win95DesktopIcon 
+            label="Calculator"
+            icon={<CalculatorIcon size={32} className="text-win95-darkgray" />}
+            onClick={openCalculator}
+          />
+          <Win95DesktopIcon 
+            label="Media Player"
+            icon={<Music size={32} className="text-win95-darkgray" />}
+            onClick={openMediaPlayer}
+          />
+          <Win95DesktopIcon 
+            label="Help"
+            icon={<HelpCircle size={32} className="text-win95-darkgray" />}
+            onClick={openHelpCenter}
+          />
+        </div>
+        
+        {windows.map((window) => (
+          !window.isMinimized && (
+            <Win95Window
+              key={window.id}
+              id={window.id}
+              title={window.title}
+              icon={window.icon}
+              isActive={activeWindow === window.id}
+              zIndex={window.zIndex}
+              onClose={() => closeWindow(window.id)}
+              onMinimize={() => minimizeWindow(window.id)}
+              onActivate={() => activateWindow(window.id)}
+            >
+              {window.content}
+            </Win95Window>
+          )
+        ))}
+
+        <Win95Taskbar
+          windows={windows}
+          activeWindow={activeWindow}
+          startMenuOpen={startMenuOpen}
+          toggleStartMenu={toggleStartMenu}
+          restoreWindow={restoreWindow}
+          openNotepad={openNotepad}
+          openMyComputer={openMyComputer}
+          openPaintApp={openPaintApp}
+          openInternetExplorer={openInternetExplorer}
+          openCalendar={openCalendar}
+          openCalculator={openCalculator}
+          openMediaPlayer={openMediaPlayer}
+          openHelpCenter={openHelpCenter}
         />
       </div>
-      
-      {windows.map((window) => (
-        !window.isMinimized && (
-          <Win95Window
-            key={window.id}
-            id={window.id}
-            title={window.title}
-            icon={window.icon}
-            isActive={activeWindow === window.id}
-            zIndex={window.zIndex}
-            onClose={() => closeWindow(window.id)}
-            onMinimize={() => minimizeWindow(window.id)}
-            onActivate={() => activateWindow(window.id)}
-          >
-            {window.content}
-          </Win95Window>
-        )
-      ))}
-
-      <Win95Taskbar
-        windows={windows}
-        activeWindow={activeWindow}
-        startMenuOpen={startMenuOpen}
-        toggleStartMenu={toggleStartMenu}
-        restoreWindow={restoreWindow}
-        openNotepad={openNotepad}
-        openMyComputer={openMyComputer}
-        openPaintApp={openPaintApp}
-        openInternetExplorer={openInternetExplorer}
-        openCalendar={openCalendar}
-        openCalculator={openCalculator}
-        openMediaPlayer={openMediaPlayer}
-        openHelpCenter={openHelpCenter}
-      />
-    </div>
+    </NetworkStatusProvider>
   );
 };
 

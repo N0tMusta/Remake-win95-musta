@@ -1,11 +1,10 @@
-
 import React, { useState } from 'react';
 import Win95Clock from './Win95Clock';
 import { 
   Computer, FileText, Settings, Folder, Image, Mail, Globe, Calendar, 
   Music, Calculator as CalculatorIcon, HelpCircle, Power, User, 
   Monitor, Workflow, Search, Printer, Network, BookOpen, Coffee,
-  FolderOpen, Lock, BarChart, Cpu, Server, Database, FileArchive
+  FolderOpen, Lock, BarChart, Cpu, Server, Database, FileArchive, Wifi
 } from 'lucide-react';
 
 interface Window {
@@ -53,6 +52,8 @@ const Win95Taskbar: React.FC<Win95TaskbarProps> = ({
   const [showDocumentsMenu, setShowDocumentsMenu] = useState(false);
   const [showSettingsMenu, setShowSettingsMenu] = useState(false);
   const [runDialogOpen, setRunDialogOpen] = useState(false);
+  const [networkDialogOpen, setNetworkDialogOpen] = useState(false);
+  const [isConnected, setIsConnected] = useState(false);
   
   const handleStartItemHover = (menu: string, isHovering: boolean) => {
     if (menu === 'programs') {
@@ -94,10 +95,63 @@ const Win95Taskbar: React.FC<Win95TaskbarProps> = ({
     toggleStartMenu();
   };
   
-  // Placeholder functions (since we don't have those functions in the props)
   const handleGameClick = () => {
     toggleStartMenu();
     alert("Game functionality is not implemented yet!");
+  };
+
+  const toggleNetworkConnection = () => {
+    if (!isConnected) {
+      setNetworkDialogOpen(true);
+    } else {
+      setIsConnected(false);
+      const disconnectNotification = document.createElement('div');
+      disconnectNotification.className = 'win95-notification';
+      disconnectNotification.innerHTML = `
+        <div class="win95-window p-2 absolute bottom-16 right-2 w-64 shadow-lg z-50">
+          <div class="win95-titlebar mb-1">
+            <div class="flex items-center gap-1">
+              <Network size={14} />
+              <span>Network Status</span>
+            </div>
+          </div>
+          <div class="p-2 text-sm">
+            You have been disconnected from the network.
+          </div>
+        </div>
+      `;
+      document.body.appendChild(disconnectNotification);
+      
+      setTimeout(() => {
+        document.body.removeChild(disconnectNotification);
+      }, 3000);
+    }
+  };
+
+  const connectToNetwork = () => {
+    setIsConnected(true);
+    setNetworkDialogOpen(false);
+    
+    const connectNotification = document.createElement('div');
+    connectNotification.className = 'win95-notification';
+    connectNotification.innerHTML = `
+      <div class="win95-window p-2 absolute bottom-16 right-2 w-64 shadow-lg z-50">
+        <div class="win95-titlebar mb-1">
+          <div class="flex items-center gap-1">
+            <Network size={14} />
+            <span>Network Status</span>
+          </div>
+        </div>
+        <div class="p-2 text-sm">
+          You are now connected to the Internet.
+        </div>
+      </div>
+    `;
+    document.body.appendChild(connectNotification);
+    
+    setTimeout(() => {
+      document.body.removeChild(connectNotification);
+    }, 3000);
   };
 
   return (
@@ -151,6 +205,18 @@ const Win95Taskbar: React.FC<Win95TaskbarProps> = ({
       
       <div className="flex-1"></div>
       
+      <button 
+        className="win95-inset px-2 py-1 bg-win95-gray text-black text-xs flex items-center mr-1"
+        onClick={toggleNetworkConnection}
+        title={isConnected ? "Connected to Internet" : "Not connected"}
+      >
+        {isConnected ? (
+          <Wifi size={16} className="text-green-600" />
+        ) : (
+          <Network size={16} className="text-gray-600" />
+        )}
+      </button>
+      
       <Win95Clock />
       
       {startMenuOpen && (
@@ -160,7 +226,6 @@ const Win95Taskbar: React.FC<Win95TaskbarProps> = ({
           </div>
           
           <div className="ml-10">
-            {/* Programs menu */}
             <div 
               className="win95-start-menu-item relative"
               onMouseEnter={() => handleStartItemHover('programs', true)}
@@ -172,7 +237,6 @@ const Win95Taskbar: React.FC<Win95TaskbarProps> = ({
               
               {showProgramsMenu && (
                 <div className="win95-submenu">
-                  {/* Accessories submenu */}
                   <div 
                     className="win95-start-menu-item relative"
                     onMouseEnter={() => handleStartItemHover('accessories', true)}
@@ -228,7 +292,6 @@ const Win95Taskbar: React.FC<Win95TaskbarProps> = ({
                     )}
                   </div>
                   
-                  {/* Games submenu */}
                   <div 
                     className="win95-start-menu-item relative"
                     onMouseEnter={() => handleStartItemHover('games', true)}
@@ -272,7 +335,6 @@ const Win95Taskbar: React.FC<Win95TaskbarProps> = ({
                     )}
                   </div>
                   
-                  {/* System Tools submenu */}
                   <div 
                     className="win95-start-menu-item relative"
                     onMouseEnter={() => handleStartItemHover('systemTools', true)}
@@ -345,7 +407,6 @@ const Win95Taskbar: React.FC<Win95TaskbarProps> = ({
               )}
             </div>
             
-            {/* Documents menu */}
             <div 
               className="win95-start-menu-item relative"
               onMouseEnter={() => handleStartItemHover('documents', true)}
@@ -369,7 +430,6 @@ const Win95Taskbar: React.FC<Win95TaskbarProps> = ({
               )}
             </div>
             
-            {/* Settings menu */}
             <div 
               className="win95-start-menu-item relative"
               onMouseEnter={() => handleStartItemHover('settings', true)}
@@ -482,8 +542,67 @@ const Win95Taskbar: React.FC<Win95TaskbarProps> = ({
           </div>
         </div>
       )}
+      
+      {networkDialogOpen && (
+        <div className="fixed inset-0 flex items-center justify-center z-50" onClick={() => setNetworkDialogOpen(false)}>
+          <div className="win95-window p-2 w-80" onClick={(e) => e.stopPropagation()}>
+            <div className="win95-titlebar mb-2">
+              <div className="flex items-center gap-1">
+                <Network size={14} />
+                <span>Dial-Up Networking</span>
+              </div>
+              <button className="win95-title-button" onClick={() => setNetworkDialogOpen(false)}>
+                <span className="text-xl leading-none">×</span>
+              </button>
+            </div>
+            <div className="p-2">
+              <div className="mb-4">
+                <div className="win95-inset p-3 mb-3 bg-white">
+                  <div className="flex items-center justify-center space-x-2 mb-2">
+                    <Computer size={20} />
+                    <div className="text-sm">Connected to:</div>
+                    <Globe size={20} />
+                  </div>
+                  <div className="text-center font-bold mb-2">Internet Service Provider</div>
+                  <div className="text-xs text-center">Phone number: 1-800-INTERNET</div>
+                </div>
+                
+                <div className="flex flex-col space-y-2 mb-3">
+                  <div className="flex justify-between items-center">
+                    <span className="text-xs">Username:</span>
+                    <input type="text" className="win95-inset px-2 py-1 text-xs bg-white w-40" defaultValue="user" />
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-xs">Password:</span>
+                    <input type="password" className="win95-inset px-2 py-1 text-xs bg-white w-40" defaultValue="•••••••" />
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <input type="checkbox" id="save-password" className="win95-checkbox" defaultChecked />
+                    <label htmlFor="save-password" className="text-xs">Save password</label>
+                  </div>
+                </div>
+              </div>
+              <div className="flex justify-center gap-2">
+                <button 
+                  className="win95-button px-4 py-1"
+                  onClick={connectToNetwork}
+                >
+                  Connect
+                </button>
+                <button 
+                  className="win95-button px-3 py-1" 
+                  onClick={() => setNetworkDialogOpen(false)}
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
 
 export default Win95Taskbar;
+
