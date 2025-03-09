@@ -1,5 +1,6 @@
+
 import React, { useState } from 'react';
-import { Clock } from './Win95Clock';
+import { Win95Clock } from './Win95Clock';
 import { 
   Computer, FileText, Settings, Folder, Image, Mail, Globe, Calendar, 
   Music, Calculator as CalculatorIcon, HelpCircle, Power, User, 
@@ -92,6 +93,12 @@ const Win95Taskbar: React.FC<Win95TaskbarProps> = ({
     setRunDialogOpen(true);
     toggleStartMenu();
   };
+  
+  // Placeholder functions (since we don't have those functions in the props)
+  const handleGameClick = () => {
+    toggleStartMenu();
+    alert("Game functionality is not implemented yet!");
+  };
 
   return (
     <div className="win95-taskbar">
@@ -144,7 +151,7 @@ const Win95Taskbar: React.FC<Win95TaskbarProps> = ({
       
       <div className="flex-1"></div>
       
-      <Clock />
+      <Win95Clock />
       
       {startMenuOpen && (
         <div className="win95-start-menu">
@@ -235,28 +242,28 @@ const Win95Taskbar: React.FC<Win95TaskbarProps> = ({
                       <div className="win95-submenu right-full top-0">
                         <button 
                           className="win95-start-menu-item"
-                          onClick={() => handleStartItemClick(openMinesweeper)}
+                          onClick={handleGameClick}
                         >
                           <div className="w-4 h-4 shrink-0 flex items-center justify-center">💣</div>
                           <span>Minesweeper</span>
                         </button>
                         <button 
                           className="win95-start-menu-item"
-                          onClick={() => handleStartItemClick(openSolitaire)}
+                          onClick={handleGameClick}
                         >
                           <div className="w-4 h-4 shrink-0 flex items-center justify-center">♣</div>
                           <span>Solitaire</span>
                         </button>
                         <button 
                           className="win95-start-menu-item"
-                          onClick={() => handleStartItemClick(openFreeCell)}
+                          onClick={handleGameClick}
                         >
                           <div className="w-4 h-4 shrink-0 flex items-center justify-center">♠</div>
                           <span>FreeCell</span>
                         </button>
                         <button 
                           className="win95-start-menu-item"
-                          onClick={() => handleStartItemClick(openHearts)}
+                          onClick={handleGameClick}
                         >
                           <div className="w-4 h-4 shrink-0 flex items-center justify-center">♥</div>
                           <span>Hearts</span>
