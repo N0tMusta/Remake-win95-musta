@@ -1,7 +1,8 @@
 
 import React, { useState, useEffect } from 'react';
 
-export const Clock: React.FC = () => {
+// Change from export const Clock to export const Win95Clock
+export const Win95Clock: React.FC = () => {
   const [time, setTime] = useState(new Date());
   
   useEffect(() => {
@@ -18,3 +19,6 @@ export const Clock: React.FC = () => {
     </div>
   );
 };
+
+// Add default export for convenience
+export default Win95Clock;

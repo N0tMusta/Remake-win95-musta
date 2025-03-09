@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Win95Clock } from './Win95Clock';
 import { 
@@ -47,7 +46,7 @@ const Win95Taskbar: React.FC<Win95TaskbarProps> = ({
   openHelpCenter
 }) => {
   const [showProgramsMenu, setShowProgramsMenu] = useState(false);
-  const [showAccessoriesMenu, setShowAccessoriesMenu] = useState(false);
+  const [showAccessoriesMenu, setShowGamesMenu] = useState(false);
   const [showGamesMenu, setShowGamesMenu] = useState(false);
   const [showSystemToolsMenu, setShowSystemToolsMenu] = useState(false);
   const [showDocumentsMenu, setShowDocumentsMenu] = useState(false);
@@ -215,7 +214,7 @@ const Win95Taskbar: React.FC<Win95TaskbarProps> = ({
                         <button 
                           className="win95-start-menu-item"
                         >
-                          <Clock size={16} className="shrink-0" />
+                          <Calendar size={16} className="shrink-0" />
                           <span>Clock</span>
                         </button>
                         <button 

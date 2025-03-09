@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { Image, Save, Folder, FileText, Settings, RefreshCw } from 'lucide-react';
 
@@ -131,7 +130,7 @@ const Paint: React.FC = () => {
       contextRef.current.strokeStyle = color; // Restore color
     } else if (tool === 'line' || tool === 'rectangle' || tool === 'circle') {
       if (savedImage && startPoint) {
-        // Restore the canvas to the state before drawing
+        // Fix the image creation code
         const img = new Image();
         img.src = savedImage;
         img.onload = () => {

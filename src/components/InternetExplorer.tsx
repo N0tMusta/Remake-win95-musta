@@ -1,6 +1,5 @@
-
 import React, { useState, useEffect } from 'react';
-import { Globe, ArrowLeft, ArrowRight, Refresh, Home, FileText, Search } from 'lucide-react';
+import { Globe, ArrowLeft, ArrowRight, RefreshCw, Home, FileText, Search } from 'lucide-react';
 
 interface WebPage {
   url: string;
@@ -20,7 +19,6 @@ const InternetExplorer: React.FC = () => {
     "https://www.geocities.com"
   ]);
 
-  // Simulated web pages
   const webPages: Record<string, WebPage> = {
     "https://www.microsoft.com": {
       url: "https://www.microsoft.com",
@@ -168,12 +166,10 @@ const InternetExplorer: React.FC = () => {
     
     setIsLoading(true);
     
-    // Simulate loading delay
     setTimeout(() => {
       setCurrentUrl(url);
       setInputUrl(url);
       
-      // Update history
       if (history[historyIndex] !== url) {
         const newHistory = history.slice(0, historyIndex + 1);
         newHistory.push(url);
@@ -258,7 +254,7 @@ const InternetExplorer: React.FC = () => {
           className="win95-button px-2 py-1"
           onClick={refresh}
         >
-          <Refresh size={14} />
+          <RefreshCw size={14} />
         </button>
         <button 
           className="win95-button px-2 py-1"
